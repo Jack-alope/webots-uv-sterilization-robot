@@ -8,7 +8,7 @@ TIME_STEP = 64
 MAX_SPEED = 6.28
 robot = Robot()
 
-waypoint = ((58,6), (55, 35), (20, 35), (20, 7))
+waypoint = ((58,6), (55, 35), (15, 35), (15, 7))
 
 
 occupancy_grid = pd.read_table('../../libraries/SampleTestMap1.csv', dtype=float, header=None, sep=',').fillna(0).values
@@ -91,21 +91,12 @@ while robot.step(TIME_STEP) != -1:
     y = int((curr_grid_y_f - curr_grid_y_b)/2)
     left_x = y + curr_grid_x_f
     left_y = x + curr_grid_y_f
-    
-    #print((left_x, left_y))
-    #object_in_way = next_grid(curr_grid_x_f, curr_grid_y_f, curr_grid_x_b, curr_grid_y_b)
-    #print('curr')
-    #object_to_left = occupancy_grid[left_y][left_x]
-    #print('left')
-    #occupancy_grid[curr_grid_y][curr_grid_x]  = 1 
 
-  
+    waypoints_hit = waypoints_hit%len(waypoint)
     distance = math.sqrt((((waypoint[waypoints_hit][1]-curr_grid_y_f)**2)+((waypoint[waypoints_hit][0]-curr_grid_x_f))**2))
 
     expected_angle = math.asin((waypoint[waypoints_hit][1]-curr_grid_y_f)/distance)
     expected_angle = expected_angle * (180/math.pi)
-    
-    
         
     if curr_grid_x_f == waypoint[waypoints_hit][0] and curr_grid_y_f > waypoint[waypoints_hit][1]:
        expected_angle = 90
@@ -133,8 +124,6 @@ while robot.step(TIME_STEP) != -1:
     else:
         norm_ang = ang
         
-    print(math.sin(math.radians(norm_exp_ang - norm_ang)))
-
     #print(expected_angle)
     #print(expected_angle_2)
     #print(waypoint[waypoints_hit])
@@ -143,8 +132,7 @@ while robot.step(TIME_STEP) != -1:
        right_speed = 0
        left_speed = 0
        waypoints_hit = waypoints_hit+1
-        #print('waypoiunt')
-    elif abs(expected_angle - ang) < 10:
+    elif abs(norm_exp_ang - norm_ang) < 10:
         left_speed = MAX_SPEED
         right_speed = MAX_SPEED
     elif math.sin(math.radians(norm_exp_ang - norm_ang)) > 0:
@@ -154,11 +142,7 @@ while robot.step(TIME_STEP) != -1:
         right_speed = -.2*MAX_SPEED
         left_speed = .2*MAX_SPEED
     
-        
-    #right_speed = 0
-    #left_speed = 0
-    #right_speed = -.5*MAX_SPEED
-    #left_speed = .5*MAX_SPEED
+
 
         
     
