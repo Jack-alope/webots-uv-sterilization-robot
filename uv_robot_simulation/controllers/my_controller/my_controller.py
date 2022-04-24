@@ -8,13 +8,12 @@ TIME_STEP = 64
 MAX_SPEED = 6.28
 robot = Robot()
 
-waypoint = ((58,6), (55, 35), (15, 35), (15, 7))
+waypoint = ((58,6), (55, 37), (15, 35), (15, 7))
 
-#waypoint = ((55, 35), (15, 35), (15, 7))
+waypoint = ((55, 35), (15, 35), (55, 7), (16, 7))
 
-#waypoint = ((58,6), (15, 35), (18, 7))
 occupancy_grid = pd.read_table('../../libraries/SampleTestMap1.csv', dtype=float, header=None, sep=',').fillna(0).values
-print(occupancy_grid[9][61])
+
 #To see what angle (in degrees) relitive to X axis bot is facing
 def ang_to_X(xf,yf,xb,yb):
     m = (yf-yb)/(xf-xb)
@@ -37,6 +36,11 @@ def next_grid(curr_x_f, curr_y_f, curr_x_b, curr_y_b):
     next_grid_x_l = -1*int((curr_y_f - curr_y_b)/4) + curr_x_f
     next_grid_y_l = -1*int((curr_x_f - curr_x_b)/4) + curr_y_f
     
+    if next_grid_y > 40 or next_grid_x > 60:
+        return True
+    elif next_grid_y < 0 or next_grid_x < 0:
+        return True
+        
     occ1 = occupancy_grid[next_grid_y][next_grid_x]
     occ2 = occupancy_grid[next_grid_y_r][next_grid_x_r]
     occ3 = occupancy_grid[next_grid_y_l][next_grid_x_l]
@@ -53,12 +57,39 @@ def next_grid(curr_x_f, curr_y_f, curr_x_b, curr_y_b):
     next_grid_x_l = -1*int((curr_y_f - curr_y_b)/3) + curr_x_f
     next_grid_y_l = -1*int((curr_x_f - curr_x_b)/3) + curr_y_f
     
+    if next_grid_y > 40 or next_grid_x > 60:
+        return True
+    elif next_grid_y < 0 or next_grid_x < 0:
+        return True
+        
     occ1 = occupancy_grid[next_grid_y][next_grid_x]
     occ2 = occupancy_grid[next_grid_y_r][next_grid_x_r]
     occ3 = occupancy_grid[next_grid_y_l][next_grid_x_l]
     
     if occ1 or occ2 or occ3:
         return True
+        
+    next_grid_x = int((curr_x_f - curr_x_b)/2) + curr_x_f
+    next_grid_y = int((curr_y_f - curr_y_b)/2) + curr_y_f
+    
+    next_grid_x_r = int((curr_y_f - curr_y_b)/2) + curr_x_f
+    next_grid_y_r = int((curr_x_f - curr_x_b)/2) + curr_y_f
+    
+    next_grid_x_l = -1*int((curr_y_f - curr_y_b)/2) + curr_x_f
+    next_grid_y_l = -1*int((curr_x_f - curr_x_b)/2) + curr_y_f
+    
+    if next_grid_y > 40 or next_grid_x > 60:
+        return True
+    elif next_grid_y < 0 or next_grid_x < 0:
+        return True
+        
+    occ1 = occupancy_grid[next_grid_y][next_grid_x]
+    occ2 = occupancy_grid[next_grid_y_r][next_grid_x_r]
+    occ3 = occupancy_grid[next_grid_y_l][next_grid_x_l]
+    
+    if occ1 or occ2 or occ3:
+        return True
+        
     return False
 
 def left_grid(curr_x_f, curr_y_f, curr_x_b, curr_y_b):
@@ -67,7 +98,11 @@ def left_grid(curr_x_f, curr_y_f, curr_x_b, curr_y_b):
     left_x = y + curr_grid_x_f
     left_y = -1*x + curr_grid_y_f
     
-    if occupancy_grid[left_y][left_x]:
+    if left_y > 40 or left_x > 60:
+        return True
+    elif left_y < 0 or left_x < 0:
+        return True
+    elif occupancy_grid[left_y][left_x]:
         return True
         
     x = int((curr_grid_x_f - curr_grid_x_b)/3)
@@ -75,9 +110,36 @@ def left_grid(curr_x_f, curr_y_f, curr_x_b, curr_y_b):
     left_x = y + curr_grid_x_f
     left_y = -1*x + curr_grid_y_f
     
-    if occupancy_grid[left_y][left_x]:
+    if left_y > 40 or left_x > 60:
+        return True
+    elif left_y < 0 or left_x < 0:
+        return True
+    elif occupancy_grid[left_y][left_x]:
+        return True
+    
+    x = int((curr_grid_x_f - curr_grid_x_b)/2)
+    y = int((curr_grid_y_f - curr_grid_y_b)/2)
+    left_x = y + curr_grid_x_f
+    left_y = -1*x + curr_grid_y_f
+    
+    if left_y > 40 or left_x > 60:
+        return True
+    elif left_y < 0 or left_x < 0:
+        return True
+    elif occupancy_grid[left_y][left_x]:
         return True
         
+    x = int((curr_grid_x_f - curr_grid_x_b))
+    y = int((curr_grid_y_f - curr_grid_y_b))
+    left_x = y + curr_grid_x_f
+    left_y = -1*x + curr_grid_y_f
+    
+    if left_y > 40 or left_x > 60:
+        return True
+    elif left_y < 0 or left_x < 0:
+        return True
+    elif occupancy_grid[left_y][left_x]:
+        return True
         
     return False
      
@@ -134,7 +196,7 @@ while robot.step(TIME_STEP) != -1:
     waypoints_hit = waypoints_hit%len(waypoint)
 
     distance = math.sqrt((((waypoint[waypoints_hit][1]-curr_grid_y_f)**2)+((waypoint[waypoints_hit][0]-curr_grid_x_f))**2))
-
+    
     expected_angle = math.asin((waypoint[waypoints_hit][1]-curr_grid_y_f)/distance)
     expected_angle = expected_angle * (180/math.pi)
         
@@ -169,22 +231,22 @@ while robot.step(TIME_STEP) != -1:
        left_speed = 0
        waypoints_hit = waypoints_hit+1
     elif abs(norm_exp_ang - norm_ang) < 8:
-        left_speed = MAX_SPEED
-        right_speed = MAX_SPEED
+        left_speed = 0.9*MAX_SPEED
+        right_speed = 0.9*MAX_SPEED
     elif math.sin(math.radians(norm_exp_ang - norm_ang)) > 0:
-        right_speed = .2*MAX_SPEED
-        left_speed = -.2*MAX_SPEED
+        right_speed = MAX_SPEED
+        left_speed = -1*MAX_SPEED
     else:
-        right_speed = -.2*MAX_SPEED
-        left_speed = .2*MAX_SPEED
+        right_speed = -1*MAX_SPEED
+        left_speed = MAX_SPEED
     
-    print(object_in_way)
+    print(object_to_left)
     if object_in_way:
-        right_speed = 0*MAX_SPEED
+        right_speed = -1*MAX_SPEED
         left_speed = MAX_SPEED
     elif object_to_left:
+        right_speed = .5*MAX_SPEED
         left_speed = MAX_SPEED
-        right_speed = 0*MAX_SPEED
         
            
     #Give speed to wheel motors  
