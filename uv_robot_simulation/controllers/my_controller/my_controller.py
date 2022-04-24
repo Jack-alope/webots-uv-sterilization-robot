@@ -8,10 +8,7 @@ TIME_STEP = 64
 MAX_SPEED = 6.28
 robot = Robot()
 
-waypoint = ((58,6), (55, 37), (15, 35), (15, 7))
-
-waypoint = ((55, 35), (15, 35), (55, 7), (16, 7))
-
+waypoint = ((10,10), (55, 35), (33, 35), (10,35), (55,10), (33,10))
 occupancy_grid = pd.read_table('../../libraries/SampleTestMap1.csv', dtype=float, header=None, sep=',').fillna(0).values
 
 #To see what angle (in degrees) relitive to X axis bot is facing
@@ -226,13 +223,13 @@ while robot.step(TIME_STEP) != -1:
     else:
         norm_ang = ang
         
-    if distance < 3:
+    if distance < 5:
        right_speed = 0
        left_speed = 0
        waypoints_hit = waypoints_hit+1
     elif abs(norm_exp_ang - norm_ang) < 8:
-        left_speed = 0.9*MAX_SPEED
-        right_speed = 0.9*MAX_SPEED
+        left_speed = MAX_SPEED
+        right_speed = MAX_SPEED
     elif math.sin(math.radians(norm_exp_ang - norm_ang)) > 0:
         right_speed = MAX_SPEED
         left_speed = -1*MAX_SPEED
@@ -241,8 +238,9 @@ while robot.step(TIME_STEP) != -1:
         left_speed = MAX_SPEED
     
     print(object_to_left)
+
     if object_in_way:
-        right_speed = -1*MAX_SPEED
+        right_speed = -.8*MAX_SPEED
         left_speed = MAX_SPEED
     elif object_to_left:
         right_speed = .5*MAX_SPEED
