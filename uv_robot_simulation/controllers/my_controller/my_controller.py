@@ -22,124 +22,39 @@ def ang_to_X(xf,yf,xb,yb):
         return math.degrees(math.atan(yf/(xf - x_intercept))) + 180
     else:
         return math.degrees(math.atan(yf/(xf - x_intercept)))
-    
-def next_grid(curr_x_f, curr_y_f, curr_x_b, curr_y_b):
-    next_grid_x = int((curr_x_f - curr_x_b)/4) + curr_x_f
-    next_grid_y = int((curr_y_f - curr_y_b)/4) + curr_y_f
-    
-    next_grid_x_r = int((curr_y_f - curr_y_b)/4) + curr_x_f
-    next_grid_y_r = int((curr_x_f - curr_x_b)/4) + curr_y_f
-    
-    next_grid_x_l = -1*int((curr_y_f - curr_y_b)/4) + curr_x_f
-    next_grid_y_l = -1*int((curr_x_f - curr_x_b)/4) + curr_y_f
-    
-    if next_grid_y > 40 or next_grid_x > 60:
-        return True
-    elif next_grid_y < 0 or next_grid_x < 0:
-        return True
-        
-    occ1 = occupancy_grid[next_grid_y][next_grid_x]
-    occ2 = occupancy_grid[next_grid_y_r][next_grid_x_r]
-    occ3 = occupancy_grid[next_grid_y_l][next_grid_x_l]
-    
-    if occ1 or occ2 or occ3:
-        return True
-    
-    next_grid_x = int((curr_x_f - curr_x_b)/3) + curr_x_f
-    next_grid_y = int((curr_y_f - curr_y_b)/3) + curr_y_f
-    
-    next_grid_x_r = int((curr_y_f - curr_y_b)/3) + curr_x_f
-    next_grid_y_r = int((curr_x_f - curr_x_b)/3) + curr_y_f
-    
-    next_grid_x_l = -1*int((curr_y_f - curr_y_b)/3) + curr_x_f
-    next_grid_y_l = -1*int((curr_x_f - curr_x_b)/3) + curr_y_f
-    
-    if next_grid_y > 40 or next_grid_x > 60:
-        return True
-    elif next_grid_y < 0 or next_grid_x < 0:
-        return True
-        
-    occ1 = occupancy_grid[next_grid_y][next_grid_x]
-    occ2 = occupancy_grid[next_grid_y_r][next_grid_x_r]
-    occ3 = occupancy_grid[next_grid_y_l][next_grid_x_l]
-    
-    if occ1 or occ2 or occ3:
-        return True
-        
-    next_grid_x = int((curr_x_f - curr_x_b)/2) + curr_x_f
-    next_grid_y = int((curr_y_f - curr_y_b)/2) + curr_y_f
-    
-    next_grid_x_r = int((curr_y_f - curr_y_b)/2) + curr_x_f
-    next_grid_y_r = int((curr_x_f - curr_x_b)/2) + curr_y_f
-    
-    next_grid_x_l = -1*int((curr_y_f - curr_y_b)/2) + curr_x_f
-    next_grid_y_l = -1*int((curr_x_f - curr_x_b)/2) + curr_y_f
-    
-    if next_grid_y > 40 or next_grid_x > 60:
-        return True
-    elif next_grid_y < 0 or next_grid_x < 0:
-        return True
-        
-    occ1 = occupancy_grid[next_grid_y][next_grid_x]
-    occ2 = occupancy_grid[next_grid_y_r][next_grid_x_r]
-    occ3 = occupancy_grid[next_grid_y_l][next_grid_x_l]
-    
-    if occ1 or occ2 or occ3:
-        return True
-        
-    return False
 
-def left_grid(curr_x_f, curr_y_f, curr_x_b, curr_y_b):
-    x = int((curr_grid_x_f - curr_grid_x_b)/4)
-    y = int((curr_grid_y_f - curr_grid_y_b)/4)
-    left_x = y + curr_grid_x_f
-    left_y = -1*x + curr_grid_y_f
+def _is_object_in_way(curr_x_f, curr_y_f, curr_x_b, curr_y_b, start_scale):
+    next_grid_x = int((curr_x_f - curr_x_b)/start_scale) + curr_x_f
+    next_grid_y = int((curr_y_f - curr_y_b)/start_scale) + curr_y_f
     
-    if left_y > 40 or left_x > 60:
+    if next_grid_y > 40 or next_grid_x > 60:
         return True
-    elif left_y < 0 or left_x < 0:
+    elif next_grid_y < 0 or next_grid_x < 0:
         return True
-    elif occupancy_grid[left_y][left_x]:
+    elif occupancy_grid[next_grid_y][next_grid_x]:
         return True
-        
-    x = int((curr_grid_x_f - curr_grid_x_b)/3)
-    y = int((curr_grid_y_f - curr_grid_y_b)/3)
-    left_x = y + curr_grid_x_f
-    left_y = -1*x + curr_grid_y_f
-    
-    if left_y > 40 or left_x > 60:
-        return True
-    elif left_y < 0 or left_x < 0:
-        return True
-    elif occupancy_grid[left_y][left_x]:
-        return True
-    
-    x = int((curr_grid_x_f - curr_grid_x_b)/2)
-    y = int((curr_grid_y_f - curr_grid_y_b)/2)
-    left_x = y + curr_grid_x_f
-    left_y = -1*x + curr_grid_y_f
-    
-    if left_y > 40 or left_x > 60:
-        return True
-    elif left_y < 0 or left_x < 0:
-        return True
-    elif occupancy_grid[left_y][left_x]:
-        return True
-        
-    x = int((curr_grid_x_f - curr_grid_x_b))
-    y = int((curr_grid_y_f - curr_grid_y_b))
-    left_x = y + curr_grid_x_f
-    left_y = -1*x + curr_grid_y_f
-    
-    if left_y > 40 or left_x > 60:
-        return True
-    elif left_y < 0 or left_x < 0:
-        return True
-    elif occupancy_grid[left_y][left_x]:
-        return True
-        
+    elif start_scale > 1:
+        return _is_object_in_way(curr_x_f, curr_y_f, curr_x_b, curr_y_b, start_scale-1)
+
     return False
-     
+    
+def _is_object_to_left(curr_x_f, curr_y_f, curr_x_b, curr_y_b, start_scale): 
+    x = int((curr_grid_x_f - curr_grid_x_b)/start_scale)
+    y = int((curr_grid_y_f - curr_grid_y_b)/start_scale)
+    left_x = y + curr_grid_x_f
+    left_y = -1*x + curr_grid_y_f
+    
+    if left_y > 40 or left_x > 60:
+        return True
+    elif left_y < 0 or left_x < 0:
+        return True
+    elif occupancy_grid[left_y][left_x]:
+        return True
+    elif start_scale > 1:
+        return _is_object_to_left(curr_x_f, curr_y_f, curr_x_b, curr_y_b, start_scale-1)        
+    
+    return False
+    
 # Wheels 1 and 2 are front left and right wheels respectivly
 # Wheels 3 and 4 are back left and right wheels respectivly
 wheels = []
@@ -157,6 +72,7 @@ gps_back = robot.getGPS('gps_back')
 gps_back.enable(TIME_STEP) 
 
 waypoints_hit = 0
+
 #Main code runs here
 while robot.step(TIME_STEP) != -1:
 
@@ -182,13 +98,8 @@ while robot.step(TIME_STEP) != -1:
     curr_grid_x_b = abs(math.floor(gps_back_value[0]/0.1)) + 1
     curr_grid_y_b = abs(math.ceil(gps_back_value[1]/0.1))
     
-    x = int((curr_grid_x_f - curr_grid_x_b)/4)
-    y = int((curr_grid_y_f - curr_grid_y_b)/4)
-    left_x = y + curr_grid_x_f
-    left_y = -1*x + curr_grid_y_f
-    
-    object_in_way = next_grid(curr_grid_x_f, curr_grid_y_f, curr_grid_x_b, curr_grid_y_b)
-    object_to_left = left_grid (curr_grid_x_f, curr_grid_y_f, curr_grid_x_b, curr_grid_y_b)
+    object_in_way = _is_object_in_way(curr_grid_x_f, curr_grid_y_f, curr_grid_x_b, curr_grid_y_b, 5)
+    object_to_left = _is_object_to_left(curr_grid_x_f, curr_grid_y_f, curr_grid_x_b, curr_grid_y_b, 5)
     
     waypoints_hit = waypoints_hit%len(waypoint)
 
@@ -237,10 +148,10 @@ while robot.step(TIME_STEP) != -1:
         right_speed = -1*MAX_SPEED
         left_speed = MAX_SPEED
     
-    print(object_to_left)
+    print(object_in_way)
 
     if object_in_way:
-        right_speed = -.8*MAX_SPEED
+        right_speed = -.6*MAX_SPEED
         left_speed = MAX_SPEED
     elif object_to_left:
         right_speed = .5*MAX_SPEED
